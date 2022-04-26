@@ -1,31 +1,23 @@
 import React, { memo } from "react";
 import {ContactsCollection} from "../api/ContactsCollection";
-//import {useSubscribe, useFind} from 'meteor/react-meteor-data';
-import {useTracker} from 'meteor/react-meteor-data';
+import {useSubscribe, useFind } from 'meteor/react-meteor-data';
 
 export const ContactList = () => {
-  //const isLoading = useSubscribe('allContacts');
-  //const contacts = useFind(() => ContactsCollection.find({}, { sort: { createdAt: -1 }}));
-  const contacts = useTracker(() => {
-    return ContactsCollection.find({}, { sort: { createdAt: -1 }}).fetch();
-  });
+  const isLoading = useSubscribe('allContacts');
+  const contacts = useFind(() => ContactsCollection.find({}, { sort: { createdAt: -1 }}))
 
   const removeContact = (event, _id) => {
     event.preventDefault();
     Meteor.call('contacts.remove', { contactId: _id });
   }
-/*
-  if(isLoading()) {
-    return (
-      <div>
-        <div className="mt-10">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-            Loading...
-          </h3>
-        </div>
-      </div>
-    )
-  }*/
+
+  const Loading = () => <div>
+    <div className="mt-10">
+      <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+        Loading...
+      </h3>
+    </div>
+  </div>
 
   const ContactItem = memo(({ contact }) => {
     return (
@@ -52,6 +44,9 @@ export const ContactList = () => {
     )
   });
 
+  if (isLoading()) {
+    return <Loading />;
+  }
   return (
     <div>
       <div className="mt-10">
